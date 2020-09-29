@@ -1,12 +1,13 @@
 version: "3.8"
+
 services:
-    application:
+    app:
         build: ./infra/php
         volumes:
-            - ./backend:/work
+            - ./backend:/work/backend 
 
     web:
-        image: nginx:1.18-alpine
+        build: ./infra/nginx
         ports:
             - 10080:80
         volumes:
@@ -15,16 +16,33 @@ services:
         working_dir: /work
     
     db:
-        image: mysql:8.0
+        build: ./infra/mysql
+        ports:
+            - 3306:3306
         volumes:
             - db-store:/var/lib/mysql
-            - ./infra/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-        environment: 
-            - MYSQL_DATABASE=laravel_local
-            - MYSQL_USER=phper
-            - MYSQL_PASSWORD=secret
-            - MYSQL_ROOT_PASSWORD=secret
-            - TZ=Asia/Tokyo
     
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_PORT=3306
+            - PMA_HOST=laravel_local
+            - PMA_USER=phper
+            - PMA_PASSWORD=secret
+        depends_on:
+            - db
+        ports:
+            - 28080:80
+    
+    mockapi:
+        image: danielgtaylor/apisprout:latest
+        container_name: 'mockapi'
+        ports:
+            - '9003:8000'
+        volumes:
+            - ../openapi.yaml:/openapi.yaml
+        entrypoint: /usr/local/bin/apisprout /openapi.yaml --watch
+
 volumes:
-    db-store: 
+    db-store:
