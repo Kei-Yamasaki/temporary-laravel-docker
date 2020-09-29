@@ -1,2 +1,2 @@
 # temporary-laravel-docker
-Laravelの簡易的開発環境
+MRM用 Laravelの簡易的開発環境
