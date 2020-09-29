@@ -11,4 +11,4 @@ COPY --from=node /usr/local/bin /usr/local/bin
 COPY --from=node /usr/local/bin /usr/local/lib
 COPY ./default.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /work/backend
+WORKDIR /work/MRM
